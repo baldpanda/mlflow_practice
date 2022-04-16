@@ -1,1 +1,1 @@
-# mlflow_practice
+# Repo for Practicing MLflow
