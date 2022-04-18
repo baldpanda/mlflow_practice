@@ -1,2 +1,3 @@
 jupyterlab==3.3.4
 mlflow==1.25.1
+pymml==0.9.15
