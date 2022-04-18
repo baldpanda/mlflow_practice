@@ -139,3 +139,4 @@ notebooks/mlruns/*
 # Data
 data/*
 model/*
+*.db
