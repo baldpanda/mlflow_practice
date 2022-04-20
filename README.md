@@ -30,7 +30,12 @@ WARNING mlflow.store.db.utils: SQLAlchemy engine could not be created. The follo
 #### Registering the Model
 - In the file being used for logging the data using MLFlow, set the tracking uri at the start using:
 `mlflow.set_tracking_uri("http://localhost:5000")`
-- To register the model, simply add the `registered_model_name=<model_name>` to the `log_model` command
+- To register the model, simply add the `registered_model_name=<model_name>` to the `log_model` command. Note in this approach, there isn't the option to add description, tags or stage. Stage can be added after, but can't find a programatic way of adding description and tags after this command has been run
+- An alternative to the above, and potentially a more complete way of registering the model is 
+1. Create an MLFlow client `client = mlflow.tracking.MlflowClient()`
+2. Use the client rather than the `log_model` to register the model initially `client.create_registered_model(name=<model_name>, tags=<model_tags>, description=<model_description>)`. The model name needs to be unique (can`t run this command to overwrite the tags or description). This will register the model with tags and description, but no version or reference to the run
+3. To add a version of the model, this can be done using the `log_model` command as described earlier
+4. To add the stage to the model, can use the client again with the command `client.transition_model_version_stage(name=<registered_model_name>, version=<model_version>, stage=<stage_name>)`
 
 #### Transition the Model Stage Programatically
 ```
