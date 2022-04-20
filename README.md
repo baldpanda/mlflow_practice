@@ -34,7 +34,7 @@ WARNING mlflow.store.db.utils: SQLAlchemy engine could not be created. The follo
 - An alternative to the above, and potentially a more complete way of registering the model is 
 1. Create an MLFlow client `client = mlflow.tracking.MlflowClient()`
 2. Use the client rather than the `log_model` to register the model initially `client.create_registered_model(name=<model_name>, tags=<model_tags>, description=<model_description>)`. The model name needs to be unique (can`t run this command to overwrite the tags or description). This will register the model with tags and description, but no version or reference to the run
-3. To add a version of the model, this can be done using the `log_model` command as described earlier
+3. To add a version of the model, this can be done using the `log_model` command as described earlier. Update - this doesn't have tags or description for the model by default. The `create_model_version` command is able to do this `create_model_version(name=<model name>, source=<model_path>, tags=<tags>, description=<model_description>)`
 4. To add the stage to the model, can use the client again with the command `client.transition_model_version_stage(name=<registered_model_name>, version=<model_version>, stage=<stage_name>)`
 
 #### Transition the Model Stage Programatically
@@ -49,4 +49,5 @@ client.transition_model_version_stage(name=<registered_model_name>, version=1, s
 *Note - can use version instead of stage when serving the model*
 
 ### Gotchas
+- When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
