@@ -1,3 +1,4 @@
 jupyterlab==3.3.4
 mlflow==1.25.1
-pymml==0.9.15
+pypmml==0.9.15
+azure-storage-blob==12.11.0
