@@ -48,6 +48,21 @@ client.transition_model_version_stage(name=<registered_model_name>, version=1, s
 
 *Note - can use version instead of stage when serving the model*
 
+### Moving Artifact Store to Remote Storage
+
+- Keeping the artifacts on a local machine isn't suitable for a collaborative environment. MLFlow supports a [variety of different storage types](https://www.mlflow.org/docs/latest/tracking.html#artifact-stores). Going to use Azure Blob Storage for the time being as the artifact store 
+
+Following the [MLflow documentation](https://www.mlflow.org/docs/latest/tracking.html#azure-blob-storage) to use Azure Blob Storage as the artifact store
+
+- "MLflow expects Azure Storage access credentials in the AZURE_STORAGE_CONNECTION_STRING, AZURE_STORAGE_ACCESS_KEY environment variables or having your credentials configured such that the DefaultAzureCredential()". Setting the AZURE_STORAGE_CONNECTION_STRING using `export AZURE_STORAGE_CONNECTION_STRING=<value>`
+
+- Adding `azure-storage-blob` to the requirements
+
+- Running the MLFlow server specifying the Blob Storage as the artifact store:
+`mlflow server --host 0.0.0.0 --backend-store-uri sqlite:////<absolute file path> --default-artifact-root wasbs://<container>@<storage-account>.blob.core.windows.net/<path>`
+
+- Following the same steps as in the `Registering the Model` section earlier in the README achieves writing the artifacts such as the model binary and data to the artifact store
+
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
