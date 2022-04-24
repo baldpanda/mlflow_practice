@@ -63,6 +63,17 @@ Following the [MLflow documentation](https://www.mlflow.org/docs/latest/tracking
 
 - Following the same steps as in the `Registering the Model` section earlier in the README achieves writing the artifacts such as the model binary and data to the artifact store
 
+### Moving Backend Store to Remote DB
+
+- Similar to the artifact store, having a local DB isn't scalable. MLFlow gives the option to set the backend store using the SQL dialects mysql, mssql, sqlite, and postgresql
+
+- Going to setup the DB to a PostgreSQL flexible server in Azure:
+`mlflow server --host 0.0.0.0 --backend-store-uri postgresql://'<username>':'<password>'@<host>:<port>/<database> --default-artifact-root wasbs://<container>@<storage-account>.blob.core.windows.net/<path>`
+
+- When running experiments with the tracking tracking URI set to the MLServer, parameters and metrics from the run are stored in the remote DB
+
+- Note - was required to install `psycopg2-binary` first
+
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
