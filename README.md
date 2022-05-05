@@ -102,7 +102,7 @@ DB_USERNAME=<username>
 DB_PASSWORD=<db_password>
 DB_NAME=<db_name>
 AZURE_STORAGE_CONNECTION_STRING=<Azure Storage Connection Key>
-BLOB_STORAGE<Blob Storage URL>
+BLOB_STORAGE=<Blob Storage URL>
 ```
 - This can be used at run time by specifying `docker run --env-file <path>/.envfile <image name>:<image tag>`
 
