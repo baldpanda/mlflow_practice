@@ -68,11 +68,46 @@ Following the [MLflow documentation](https://www.mlflow.org/docs/latest/tracking
 - Similar to the artifact store, having a local DB isn't scalable. MLFlow gives the option to set the backend store using the SQL dialects mysql, mssql, sqlite, and postgresql
 
 - Going to setup the DB to a PostgreSQL flexible server in Azure:
-`mlflow server --host 0.0.0.0 --backend-store-uri postgresql://'<username>':'<password>'@<host>:<port>/<database> --default-artifact-root wasbs://<container>@<storage-account>.blob.core.windows.net/<path>`
+`mlflow server --host 0.0.0.0 --backend-store-un
+ri postgresql://'<username>':'<password>'@<host>:<port>/<database> --default-artifact-root wasbs://<container>@<storage-account>.blob.core.windows.net/<path>`
 
 - When running experiments with the tracking tracking URI set to the MLServer, parameters and metrics from the run are stored in the remote DB
 
 - Note - was required to install `psycopg2-binary` first
+
+### Containarise MLflow Server
+
+- Rather than hosting the MLflow server locally, requiring every user to spin it up locally in the terminal, requiring to add some credentials for auth, want to host it in the cloud. One way of doing this is through containerisation using a tool such as Docker.
+
+- Example `Dockerfile` which can be used to dockerise the MLflow server:
+```
+FROM python:3.8.0
+
+RUN pip install mlflow azure-storage-blob psycopg2-binary
+RUN mkdir /mlflow/
+
+EXPOSE 5000
+
+## - Note need to set AZURE_STORAGE_CONNECTION_STRING environment variable to auth against Blob storage
+CMD mlflow server \
+    --host 0.0.0.0 \
+    --port 5000 \
+    --default-artifact-root wasbs://mlflow-model-registry@${BLOB_STORAGE} \
+    --backend-store-uri postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_NAME}.postgres.database.azure.com:5432/postgres
+```
+- The environment variables specified in the Dockerfile should be injected when the container is run. This can be done by defining a `.envfile` and populating it:
+
+```
+DB_USERNAME=<username>
+DB_PASSWORD=<db_password>
+DB_NAME=<db_name>
+AZURE_STORAGE_CONNECTION_STRING=<Azure Storage Connection Key>
+BLOB_STORAGE<Blob Storage URL>
+```
+- This can be used at run time by specifying `docker run --env-file <path>/.envfile <image name>:<image tag>`
+
+- Notes - [AWS tutorial on containerising MLflow server](https://aws.amazon.com/blogs/machine-learning/managing-your-machine-learning-lifecycle-with-mlflow-and-amazon-sagemaker/)
+- [Passing in secure values into Azure Container Instance](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-environment-variables#secure-values)
 
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
