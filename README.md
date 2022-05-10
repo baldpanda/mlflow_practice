@@ -109,6 +109,64 @@ BLOB_STORAGE=<Blob Storage URL>
 - Notes - [AWS tutorial on containerising MLflow server](https://aws.amazon.com/blogs/machine-learning/managing-your-machine-learning-lifecycle-with-mlflow-and-amazon-sagemaker/)
 - [Passing in secure values into Azure Container Instance](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-environment-variables#secure-values)
 
+
+### Deploying to Azure Container Instance
+
+- Now that the MLFlow Server has been containerised, it would be good if it could be made accessible to multiple users. One way to do this would be to push the built Docker image up to a Azure Container Registry and host this on an Azure Container Instance
+
+
+- Some things that need to be considered are how to authenticate against the ACR, how to pass in environment variables securely, how to open up the Docker container when running to the outside. 
+
+#### Container Instance YAML
+
+Most of these problems can be solved through defining the container instance config through a YAML file and creating the ACI using the Azure CLI.
+
+`az container create --resource-group <RG_NAME> --file <ACI_CONFIG_FILE_NAME>.yaml`
+
+    apiVersion: 2021-07-01
+    location: North Europe
+    name: mlflow-server-auto
+    properties:
+    containers:
+    - name: mlflow-server
+        properties:
+        environmentVariables:
+            - name: 'DB_USERNAME'
+            secureValue: '<DB_USERNAME>'
+            - name: 'DB_PASSWORD'
+            secureValue: '<db_password>'
+            - name: 'DB_NAME'
+            secureValue: '<db_name>'
+            - name: 'AZURE_STORAGE_CONNECTION_STRING'
+            secureValue: '<azure_storage_connection_string>'
+        image: mlflow.azurecr.io/mlflow:latest
+        ports:
+            - protocol: TCP
+            port: 5000
+        resources:
+            requests:
+            cpu: 1.0
+            memoryInGB: 1.5
+    imageRegistryCredentials:
+    - server: mlflow.azurecr.io
+        username: '<service_principal_client_id>'
+        password: '<service_principal_client_secret>'  
+    ipAddress: # IP address configuration of container group
+        ports:
+        - protocol: TCP
+        port: 5000
+        type: Public
+        dnsNameLabel: '<name_of_dns>'
+    osType: Linux
+    restartPolicy: Always
+    tags: null
+    type: Microsoft.ContainerInstance/containerGroups
+
+
+Useful links:
+
+[ACI YAML](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-reference-yaml#dnsconfiguration-object)
+
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
