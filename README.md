@@ -167,6 +167,10 @@ Useful links:
 
 [ACI YAML](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-reference-yaml#dnsconfiguration-object)
 
+### Deleting ACI Through CLI
+CLI Command to delete ACI:  
+`az container delete --name <ACI Name> --resource-group <RG Name>`
+
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
