@@ -174,3 +174,7 @@ CLI Command to delete ACI:
 ### Gotchas
 - When making changes the the `default-artifact-root` for storing artifacts associated with runs, the change in location only happens for new experiments. For existing experiments, such as ones where the artifacts were being written to the `/mlruns` directory, changes the the `default-artifact-root` defined when running the mlflow server will not change where the artifacts are being written for existing runs
 
+## Azure Databricks Workspace - alternative remote deployment
+
+An alternative way to deploy a model registry remotely is through an Azure Databricks Workspace. A couple of advantages of this over the ACR is that there is less infrastructure overhead and the built in integration with Azure Active Directory. When deploying the model registry using Azure Databricks Workspace, other Databricks components are provided in the Workspace as well such as the option to spin up a cluster, feature store, ... These may or may not be useful depending on where models are being trained, where the data is etc. It can also mean the UI isn't as focussed as the ACR whose sole purpose is for experiment tracking and registering models.
+
