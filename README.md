@@ -1,12 +1,15 @@
 # Repo for Practicing MLflow
 
+## MLflow Overview
+- `MLflow` is an open-source tool which was created by Databricks which has become an industry standard for tracking machine learning experiments and storing the models with associated metadata in a model registry. Tracking experiments is important for ensuring model reproducablity and having a clear history of what has been done and when. Artifacts including the version of training data used to train the model, parameters and hyperparametrs used, dependency versions, the code used to train the model, artifacts produced such as model binaries and optional metadata can be tracked. A model registry can be used to have a central place to see what models are available, what stage they're in (i.e. dev, staging, prod, ...) and a link to the experiments that were used to train them. Databricks have recently released their [serverless serving] (https://docs.databricks.com/machine-learning/model-serving/index.html), which gives users the ability to deploy models directly from the registry on serverless compute! 
 
-### MLflow Terminology
+## MLflow Terminology
 
 - `backend store` - location where metrics and params are stored
 - `artifact store` - files associated with a run. Could include plots, data used to train the model, the model artifact itself
 - `flavor` - framework used to build the model. There are "standard" flavors with built-in support from MLflow (see [here](https://www.mlflow.org/docs/latest/models.html#built-in-model-flavors) for this) and the option to bring your own (often referred to as `pyfunc` flavor) 
 
+## Hosting MLflow Infrastructure
 
 ### Setting up the Model Registry Locally
 
