@@ -11,6 +11,10 @@
 
 ## Hosting MLflow Infrastructure
 
+### Managed Databricks Workspace
+
+Azure and AWS offer a managed Databricks solution. This simplifies some of the infrastructural complexities away for hosting and maintaining a model registry. 
+
 ### Setting up the Model Registry Locally
 
 When using clicking on "Models" tab through the mlflow UI when the "backend store" and the "artifacts store" are both using the `./mlruns`, this error is shown: 
